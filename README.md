@@ -1,4 +1,7 @@
 # OpenCV-project-Aruco-Marker-
+
+PROBLEM STATEMENT 
+
 You work in a firm where they have a specific department, to autonomously put aruco markers on square boxes. Your task is to write a python code, for finding square boxes in an image and then place aruco markers exactly overlapping on it with the following rules.
 
 
