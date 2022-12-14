@@ -1,4 +1,4 @@
-# thoda aur  kaam baki h ;)
+
 # final aurco reader
 
 import cv2
