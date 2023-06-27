@@ -1,27 +1,27 @@
 # OpenCV-project-Aruco-Marker-
 
-PROBLEM STATEMENT 
+With the help of this OpenCV project, we have autonomously put ArUco markers on square boxes. 
 
-You work in a firm where they have a specific department, to autonomously put aruco markers on square boxes. Your task is to write a python code, for finding square boxes in an image and then place aruco markers exactly overlapping on it with the following rules.
+ArUco markers are binary square fiducial markers that can be used for camera pose estimation. Their main benefit is that their detection is robust, fast, and straightforward.
 
+### PROBLEM STATEMENT
+ 
+- Python code for finding square boxes in an image
 
+- Place aruco markers exactly overlapping on it with the following rules.
 
-Box Colour
-Marker ID
-Green
-1
-Orange
-2
-Black
-3
-Pink-Peach
-4
+- Box Colour Marker ID Green 1 Orange 2 Black 3 Pink-Peach 4
 
+- The aruco markers are placed precisely on the squares only, even the orientation of the square.
 
-The aruco markers should exactly be placed on the squares only, even the orientation of the square should be kept in mind.
-
-As for your convenience, you will be given these markers in the same folder, but not with their id specified
-Hope you don't change the orientation of the boxes while placing the markers :)
+Markers are in the given folder (but not id specified)
 
 Folder: https://drive.google.com/drive/folders/1ZqsNvyVSxA2i6jjq54mJCGuVJ-6TskMt?usp=sharing
 
+ 
+<img alt="Shows an illustrated sun in light mode and a moon with stars in dark mode." src="https://user-images.githubusercontent.com/25423296/163456779-a8556205-d0a5-45e2-ac17-42d089e3c3f8.png">
+ 
+
+
+
+> _Future Modification: autonomously put ArUco markers on square boxes in real-time (beneficial at industry level )  :)_
