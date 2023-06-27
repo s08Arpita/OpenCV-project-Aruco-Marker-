@@ -1,120 +1,111 @@
-
-# final aurco reader
+# final working file
 
 import cv2
 import numpy as np
-import imutils
 
-center = []
-
-id_no=[]
-#store all addr.
-colour = []
-arco_id = ["C:\\Users\\Arpita Singh\\PycharmProjects\\resource\\LMAO.jpg",
-	"C:\\Users\\Arpita Singh\\PycharmProjects\\resource\\XD.jpg",
-	"C:\\Users\\Arpita Singh\\PycharmProjects\\resource\\Ha.jpg",
-	"C:\\Users\\Arpita Singh\\PycharmProjects\\resource\\HaHa.jpg"]
-cv_task = "C:\\Users\\Arpita Singh\\PycharmProjects\\resource\\CVtask.jpg"
 Colors = [
-[[[79,209,146]]], # Green
-[[[9,127,240]]], # Orange
-[[[0, 0, 0]]], # Black
-[[[210,222,228]]], # Peach-pink
+    [[32, 10, 20], [161, 255, 255]],  # Green
+    [[14, 185, 185], [173, 255, 255]],  # Orange
+    [[0, 0, 0], [179, 255, 184]],  # Black
+    [[0, 0, 205], [179, 40, 233]]  # Peach-pink
+]
+
+src = []
+dst = []
+
+
+def getContours(img):
+    contours, hierarchy = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    for cnt in contours:
+        area = cv2.contourArea(cnt)
+        if area > 500:
+            perimeter = cv2.arcLength(cnt, True)
+            approx = cv2.approxPolyDP(cnt, 0.02 * perimeter, True)
+            objCor = len(approx)
+            x, y, w, h = cv2.boundingRect(approx)
+            if objCor == 4:
+                aspRatio = w / float(h)
+                if aspRatio > 0.95 and aspRatio < 1.05:
+                    print(approx)
+                    print("square")
+                    dst = approx
+                    return dst
+
+
+img = cv2.imread("C:\\Users\\Arpita Singh\\PycharmProjects\\resource\\CVtask.jpg")
+img = cv2.resize(img, (440, 310))
+imgResult = img.copy()
+imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+arucos = [
+    "C:\\Users\\Arpita Singh\\OneDrive\Desktop\\OpenCV-project-Aruco-Marker--main\\LMAO.jpg",
+    "C:\\Users\\Arpita Singh\\OneDrive\Desktop\\OpenCV-project-Aruco-Marker--main\\XD.jpg",
+    "C:\\Users\\Arpita Singh\\OneDrive\Desktop\\OpenCV-project-Aruco-Marker--main\\Ha.jpg",
+    "C:\\Users\\Arpita Singh\\OneDrive\Desktop\\OpenCV-project-Aruco-Marker--main\\HaHa.jpg",
 ]
 
 
+def detectAruco(img):
+    ARUCO_DICT = {
+        "DICT_4X4_50": cv2.aruco.DICT_4X4_50,
+        "DICT_4X4_100": cv2.aruco.DICT_4X4_100,
+        "DICT_4X4_250": cv2.aruco.DICT_4X4_250,
+        "DICT_4X4_1000": cv2.aruco.DICT_4X4_1000,
+        "DICT_5X5_50": cv2.aruco.DICT_5X5_50,
+        "DICT_5X5_100": cv2.aruco.DICT_5X5_100,
+        "DICT_5X5_250": cv2.aruco.DICT_5X5_250,
+        "DICT_5X5_1000": cv2.aruco.DICT_5X5_1000,
+        "DICT_6X6_50": cv2.aruco.DICT_6X6_50,
+        "DICT_6X6_100": cv2.aruco.DICT_6X6_100,
+        "DICT_6X6_250": cv2.aruco.DICT_6X6_250,
+        "DICT_6X6_1000": cv2.aruco.DICT_6X6_1000,
+        "DICT_7X7_50": cv2.aruco.DICT_7X7_50,
+        "DICT_7X7_100": cv2.aruco.DICT_7X7_100,
+        "DICT_7X7_250": cv2.aruco.DICT_7X7_250,
+        "DICT_7X7_1000": cv2.aruco.DICT_7X7_1000,
+        "DICT_ARUCO_ORIGINAL": cv2.aruco.DICT_ARUCO_ORIGINAL,
+        "DICT_APRILTAG_16h5": cv2.aruco.DICT_APRILTAG_16h5,
+        "DICT_APRILTAG_25h9": cv2.aruco.DICT_APRILTAG_25h9,
+        "DICT_APRILTAG_36h10": cv2.aruco.DICT_APRILTAG_36h10,
+        "DICT_APRILTAG_36h11": cv2.aruco.DICT_APRILTAG_36h11
+    }
 
-# find the id of each arco
+    for (arucoName, arucoDict) in ARUCO_DICT.items():
+        arucoDict = cv2.aruco.Dictionary_get(arucoDict)
+        arucoParams = cv2.aruco.DetectorParameters_create()
+        (corners, ids, rejected) = cv2.aruco.detectMarkers(img, arucoDict, parameters=arucoParams)
+        if len(corners) > 0:
+            print(f"[INFO] detected {len(corners)} markers for '{arucoName}'")
 
-#function reading ids of marker
-def findAurco(img,marker_size=5,total_marker=250,draw=True):
-    grey=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    key=getattr(cv2.aruco,f'DICT_{marker_size}X{marker_size}_{total_marker}')
-    arucoDict=cv2.aruco.Dictionary_get(key)
-    arucoParem=cv2.aruco.DetectorParameters_create()
-    (bbox,ids,_)=cv2.aruco.detectMarkers(grey,arucoDict,parameters=arucoParem)
+
+for aruco in arucos:
+    imgAruco = cv2.imread(aruco)
+    arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_50)
+    arucoParams = cv2.aruco.DetectorParameters_create()
+    (corners, ids, rejected) = cv2.aruco.detectMarkers(imgAruco, arucoDict, parameters=arucoParams)
     arucoID = ids[0][0]
-    print(arucoID)
-    id_no.append(arucoID)
 
+    imgB = np.zeros((imgAruco.shape[1], imgAruco.shape[0], 3), np.uint8)
+    # print(imgBlack)
+    cv2.drawContours(imgB, [corners[0].astype(int)], -1, (255, 255, 255), cv2.FILLED)
 
+    imgBlack = cv2.cvtColor(imgB, cv2.COLOR_BGR2GRAY)
+    imgSrc = cv2.bitwise_and(imgAruco, imgB)
 
-for id in arco_id:
-    marker_name = cv2.imread(id)
-    print('ID OF ',id)
-    findAurco(marker_name)
+    contours, hierarchy = cv2.findContours(imgBlack, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    for curve in contours:
+        peri = cv2.arcLength(curve, True)
+        approx = cv2.approxPolyDP(curve, 0.02 * peri, True)
+        src = approx
+        # for color detection
+        lower = np.array(Colors[arucoID - 1][0])
+        upper = np.array(Colors[arucoID - 1][1])
+        mask = cv2.inRange(imgHSV, lower, upper)
+        dst = getContours(mask)
+        h, status = cv2.findHomography(src, dst)  # doing the maths
+        imgTemp = cv2.warpPerspective(imgSrc, h, (440, 310))
+        imgResult = cv2.bitwise_or(imgTemp, imgResult)
 
-# rename all the image name with their id
-i=0
-for id in arco_id:
-    marker_name = cv2.imread(id)
-    num = '{}.jpg'.format(id_no[i])
-    #cv2.imshow(num,marker_name)
-    i=i+1
-    cv2.imwrite(num, marker_name)
-
-# make contour on image
-img = cv2.imread(cv_task)
-img = cv2.resize(img,None,None,fx=0.5,fy=0.5)
-#cv2.imshow('original',img)
-# covert into the gray image
-img_grey = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-cv2.imshow('gray',img_grey)
-#threshold image
-thresh, thresh_img = cv2.threshold(img_grey,225,255,cv2.THRESH_BINARY)
-#cv2.imshow('thresh',thresh_img)
-#find the total contour
-cont = cv2.findContours(thresh_img,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-cont = imutils.grab_contours(cont)
-print(len(cont))
-for c in cont:
-    perimeter = cv2.arcLength(c, True)
-    approx = cv2.approxPolyDP(c, 0.01 * perimeter, True)
-    x, y, w, h = cv2.boundingRect(approx)
-    if len(approx) == 4:
-        aspRatio = w / float(h)
-        if aspRatio > 0.95 and aspRatio < 1.05:
-
-            box = cv2.minAreaRect(c)
-            print(box[0])
-            center.append(box[0])
-
-            (y, x) = box[0]
-            x= int(x)
-            y= int(y)
-            color = img[x:x+1,y:y+1]
-            lis = color.tolist()
-            a=0
-            for c in Colors:
-                a= a+1
-                if lis == c:
-                    print(a)
-                    break
-
-            box = cv2.boxPoints(box)
-            print(box)
-            box = np.array(box, dtype='int')
-            cv2.drawContours(img, [box], -1, (0, 255, 0),3)
-
-
-            marker = cv2.imread(arco_id[a-1])
-            key = getattr(cv2.aruco, f'DICT_{5}X{5}_{250}')
-            arucoDict = cv2.aruco.Dictionary_get(key)
-            arucoParem = cv2.aruco.DetectorParameters_create()
-            (bbox, ids, _) = cv2.aruco.detectMarkers(marker, arucoDict, parameters=arucoParem)
-            bbox = np.array(bbox, dtype='int')
-            bbox=bbox[0]
-            #h, w, c = marker.shape
-            pts1 = np.array(box)
-            pts2 = np.array(bbox)
-            matrix, _ = cv2.findHomography(pts2, pts1)
-            imgOut = cv2.warpPerspective(marker, matrix, (img.shape[1], img.shape[0]))
-            img = cv2.bitwise_or(img, imgOut)    # 0 for black and 1 for colour
-
-cv2.imshow('out',img)
-cv2.imwrite('finally.jpg',img)
-#cv2.imshow('imgOut',imgOut)
-
-
+cv2.imshow("Result", imgResult)
 
 cv2.waitKey(0)
